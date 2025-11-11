@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pernikahan</title>
+    <style>
+        /* CSS Reset dan Mobile First */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+            box-sizing: border-box;
+            font-family: 'Garamond', serif; 
+        }
+
+        /* Audio Player (Disembunyikan) */
+        #music-player {
+            display: none; 
+        }
+
+        /* Container Utama (Cover Fullscreen HP) */
+        .cover-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+            /* URL GAMBAR ANDA (SUDAH DIUBAH DARI DROPBOX RAW=1) */
+            background-image: url('https://www.dropbox.com/scl/fi/c577a4zzi82dtvn221rv5/Halaman-1_20251111_104040_0000.jpg?rlkey=mlhn1qtg78ncj1mtlmmmhw5y0&st=vglijmzw&raw=1'); 
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Lapisan Overlay Transparan */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; /* Dibuat 100% agar berfungsi */
+            height: 100%; /* Dibuat 100% agar berfungsi */
+            background-color: rgba(0, 0, 0, 0.2); 
+            z-index: 1;
+        }
+
+        /* Konten Utama (Teks) */
+        .content {
+            position: relative;
+            z-index: 2; 
+            color: black; 
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Teks "Kepada yang Terhormat" (81% dari atas) */
+        .yth-text {
+            position: absolute;
+            width: 100%;
+            top: 81%; 
+            transform: translateY(-50%);
+            font-size: 0.9em;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        /* Nama Tamu Undangan (86% dari atas) */
+        #guest-name-display {
+            position: absolute;
+            width: 100%;
+            top: 86%; 
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        /* Area Tombol Buka Undangan (93% dari atas) */
+        .button-area {
+            position: absolute;
+            bottom: 10%; 
+            left: 50%;
+            transform: translateX(-50%); 
+            width: 80%; 
+            max-width: 300px;
+            z-index: 3;
+            margin-bottom: -20px; 
+        }
+
+        /* Tombol Buka Undangan (Biru Pastel) */
+        #open-button-action { /* Menggunakan ID tombol action untuk styling */
+            padding: 12px 25px;
+            background-color: #ADD8E6; 
+            color: #333333; 
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none; 
+            display: block;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: inherit; 
+        }
+    </style>
+</head>
+<body>
+    
+    <audio id="music-player" loop style="display: none;">		
+        <source src="Lagu_final.mp3" type="audio/mpeg">		
+    </audio>
+
+    <div class="cover-container">
+        
+        <div class="overlay"></div>
+
+        <div class="content">
+            <p class="yth-text" style="color: inherit;">Kepada yang Terhormat</p>
+            
+            <h1 id="guest-name-display">Tamu Undangan</h1>
+        </div>
+        
+        <div class="button-area">
+            <button id="open-button-action" onclick="playMusicAndRedirect()">
+                Buka Undangan
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // URL tujuan saat tombol diklik (Link situs Canva Anda)
+        const DESTINATION_URL = "https://happifygift.my.canva.site/wedding-ayu-iyan";
+
+        // --- 1. Fungsi Mengambil Nama Tamu ---
+        function getGuestName() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let name = urlParams.get('to');
+            if (name) {
+                return decodeURIComponent(name).replace(/_/g, ' '); 
+            }
+            return 'Tamu Undangan'; 
+        }
+
+        // --- 2. Fungsi Memutar Musik dan Mengarahkan (Dipanggil oleh Tombol) ---
+        function playMusicAndRedirect() {
+            const player = document.getElementById('music-player');
+            
+            // 1. Set Volume Penuh (PENTING)
+            player.volume = 1.0; 
+            
+            // 2. Coba Putar Musik, dan tangani kegagalan
+            player.play().catch(error => {
+                // Logika jika play() ditolak browser (musik tidak bisa dimainkan)
+                console.warn("Autoplay diblokir, tetap redirecting.");
+                // Tetap arahkan ke URL tujuan jika musik gagal dimainkan
+                window.location.href = DESTINATION_URL; 
+                return; 
+            });
+            
+            // 3. Langsung Arahkan ke URL Tujuan setelah jeda singkat
+            setTimeout(() => {
+                window.location.href = DESTINATION_URL;
+            }, 50); // Jeda 50ms untuk memberi waktu play() diproses
+        }
+
+        // --- 3. Tampilkan Nama Tamu saat Halaman Dimuat ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const guestName = getGuestName();
+            const displayElement = document.getElementById('guest-name-display');
+            if (displayElement) {
+                displayElement.textContent = guestName;
+            }
+        });
+    </script>
+</body>
+</html>
